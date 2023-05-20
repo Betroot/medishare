@@ -15,7 +15,6 @@ import utils
 application.secret_key = 'your_secret_key_here'
 @application.route('/')
 def root():
-    print("Hello, World!")
     return render_template(
         'login.html')
 

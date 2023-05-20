@@ -45,6 +45,7 @@ def validate_user(email, password):
     #         return False
     data = {"operation": "read", "payload": {"Item": {"email": email, "password": password}}}
     response = requests.get(public_api + 'login', json=data)
+    print("response: " + response)
     if response.status_code == 200:
         # 登录成功
         if 'Item' in response and response['Item']['password'] == password:
@@ -137,75 +138,3 @@ def create_subscribe_table():
     else:
         print(f"Table subscribe already exists.")
 
-
-def create_login_table():
-    try:
-        table = dynamodb.Table('login')
-        table.table_status
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'ResourceNotFoundException':
-            table = dynamodb.create_table(
-                TableName='login',
-                KeySchema=[
-                    {
-                        'AttributeName': 'email',
-                        'KeyType': 'HASH'
-                    }
-                ],
-                AttributeDefinitions=[
-                    {
-                        'AttributeName': 'email',
-                        'AttributeType': 'S'
-                    }
-                ],
-                ProvisionedThroughput={
-                    'ReadCapacityUnits': 5,
-                    'WriteCapacityUnits': 5
-                }
-            )
-            table.wait_until_exists()
-        else:
-            raise e
-    else:
-        print(f"Table login already exists.")
-
-
-def create_music_table():
-    table_name = 'music'
-    try:
-        table = dynamodb.Table(table_name)
-        table.table_status
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'ResourceNotFoundException':
-            table = dynamodb.create_table(
-                TableName=table_name,
-                KeySchema=[
-                    {
-                        'AttributeName': 'artist',
-                        'KeyType': 'HASH'
-                    },
-                    {
-                        'AttributeName': 'title',
-                        'KeyType': 'RANGE'
-                    }
-                ],
-                AttributeDefinitions=[
-                    {
-                        'AttributeName': 'artist',
-                        'AttributeType': 'S'
-                    },
-                    {
-                        'AttributeName': 'title',
-                        'AttributeType': 'S'
-                    }
-                ],
-                ProvisionedThroughput={
-                    'ReadCapacityUnits': 5,
-                    'WriteCapacityUnits': 5
-                }
-            )
-            table.wait_until_exists()
-        else:
-            raise e
-    else:
-        print(f"Table {table_name} already exists.")
