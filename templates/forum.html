@@ -1,49 +1,82 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>Table Example</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.14.0/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.14.0/umd/react-dom.production.min.js"></script>
-</head>
-<body>
-  <div id="root"></div>
-
-  <script>
-    // 创建一个无状态组件
-    function Table(props) {
-      return (
-        React.createElement('table', null,
-          React.createElement('thead', null,
-            React.createElement('tr', null,
-              React.createElement('th', null, 'Name'),
-              React.createElement('th', null, 'Age'),
-              React.createElement('th', null, 'Location')
-            )
-          ),
-          React.createElement('tbody', null,
-            props.data.map(function(item, index) {
-              return React.createElement('tr', { key: index },
-                React.createElement('td', null, item.name),
-                React.createElement('td', null, item.age),
-                React.createElement('td', null, item.location)
-              );
-            })
-          )
-        )
-      );
+  <title>Forum Page</title>
+  <style>
+    .user-area {
+      text-align: right;
+      padding: 15px 0;
     }
+  </style>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+  <script>
+    $(document).ready(function () {
+      $.ajax({
+        url: '/get_message',
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+          fillTable(data);
+        },
+        error: function (xhr, status, error) {
+          console.log('Error: ' + error);
+        }
+      });
+    });
 
-    // 渲染表格组件到根元素
-    ReactDOM.render(
-      React.createElement(Table, {
-        data: [
-          { name: 'John', age: 25, location: 'New York' },
-          { name: 'Jane', age: 30, location: 'San Francisco' },
-          { name: 'Bob', age: 35, location: 'Chicago' }
-        ]
-      }),
-      document.getElementById('root')
-    );
+    function fillTable(data) {
+      var table = $('#myTable').DataTable();
+      table.clear().draw();
+      $.each(data, function (index, row) {
+        table.row.add([row.name, row.age, row.location]).draw();
+      });
+    }
   </script>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Forum Page</h2>
+    <div class="user-area">
+      <p>Welcome, {{ user_name }}</a></p>
+      <a href="/logout" class="logout-link">Logout</a>
+    </div>
+
+    <div class="message-posting-area">
+      <form action="/post_message" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="subject">Medicine:</label>
+          <input type="text" class="form-control" id="subject" name="subject" required>
+        </div>
+        <div class="form-group">
+          <label for="image">Image:</label>
+          <input type="file" class="form-control-file" id="image" name="image">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+
+    <div class="message-display-area">
+      <h2>Medicine Information</h2>
+      <table id="myTable" class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th>Medicine</th>
+            <th>image</th>
+            <th>Distance</th>
+            <th>user</th>
+            <th>Phone number</th>
+            <th>timestamp</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 </body>
+
 </html>

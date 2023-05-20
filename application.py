@@ -41,12 +41,12 @@ def register():
         email = request.form['email']
         user_name = request.form['user_name']
         password = request.form['password']
-
+        phone_number = request.form['phone_number']
         if utils.is_email_exist(email):
             error_message = 'The email already exists'
             return render_template('register.html', error_msg=error_message)
 
-        utils.insert_user(email, user_name, password)
+        utils.insert_user(email, user_name, password, phone_number)
         return redirect(url_for('login'))
 
 

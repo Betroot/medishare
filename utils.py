@@ -83,8 +83,8 @@ def query_subscription_by_email(email):
     return response
 
 
-def insert_user(email, user_name, password):
-    data = {"operation": "create", "payload": {"Item": {"email": email, "user_name": user_name, "password": password}}}
+def insert_user(email, user_name, password, phone_number):
+    data = {"operation": "create", "payload": {"Item": {"email": email, "user_name": user_name, "password": password, "phone_number": phone_number}}}
     requests.post(public_api + 'login', json=data)
 
 
