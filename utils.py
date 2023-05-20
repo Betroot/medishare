@@ -59,7 +59,7 @@ def validate_user(email, password):
     if response.status_code == 200:
         res = response.json()
         # login successfully
-        if 'Item' in response and response['Item']['password'] == password:
+        if 'Item' in res and res['Item']['password'] == password:
             return res['Item']
     else:
         return False
