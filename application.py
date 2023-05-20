@@ -2,24 +2,24 @@ from flask import Flask, request, redirect, render_template, session, url_for, f
 import logging
 import boto3
 
-app = Flask(__name__)
-app.logger.setLevel(logging.INFO)
-handler = logging.FileHandler('myapp.log')
+application = Flask(__name__)
+application.logger.setLevel(logging.INFO)
+handler = logging.FileHandler('myapplication.log')
 handler.setLevel(logging.INFO)
-app.logger.addHandler(handler)
+application.logger.addHandler(handler)
 s3 = boto3.client('s3')
 bucket_name = "music-bucket340822"
 
 import utils
 
 
-@app.route('/')
+@application.route('/')
 def root():
     return render_template(
         'login.html')
 
 
-@app.route('/login', methods=['GET', "POST"])
+@application.route('/login', methods=['GET', "POST"])
 def login():
     if request.method == 'GET':
         return render_template('login.html')
@@ -38,7 +38,7 @@ def login():
         return render_template('login.html', error_msg=error_msg)
 
 
-@app.route('/register', methods=['GET', "POST"])
+@application.route('/register', methods=['GET', "POST"])
 def register():
     if request.method == 'GET':
         return render_template('register.html')
@@ -55,21 +55,21 @@ def register():
         return redirect(url_for('login'))
 
 
-@app.route('/forum', methods=['GET', "POST"])
+@application.route('/forum', methods=['GET', "POST"])
 def forum():
     user_name = session.get("user_name")
     return render_template("forum.html", user_name=user_name)
     return redirect(url_for("login"))
 
 
-@app.route('/logout', methods=['GET', 'POST'])
+@application.route('/logout', methods=['GET', 'POST'])
 def logout_():
     del session['email']
     del session['user_name']
     return redirect('/login')
 
 
-@app.route('/perform-query', methods=['GET'])
+@application.route('/perform-query', methods=['GET'])
 def perform_query():
     title = request.args.get('title')
     year = request.args.get('year')
@@ -96,11 +96,11 @@ def perform_query():
         image_name = image_url.split('/')[-1]
         image_signed_url = s3.generate_presigned_url('get_object', Params={'Bucket': bucket_name, 'Key': image_name})
         music_info['image_url'] = image_signed_url
-        music_list.append(music_info)
+        music_list.applicationend(music_info)
     return jsonify( music_list)
 
 
-@app.route('/subscribe', methods=['POST'])
+@application.route('/subscribe', methods=['POST'])
 def subscribe():
     title = request.get_json()['title']
     year = request.get_json()['year']
@@ -111,7 +111,7 @@ def subscribe():
     utils.insert_subscribe(email,title,year,artist,img_url)
     return jsonify({'success': True})
 
-@app.route('/remove_subscribe', methods=['POST'])
+@application.route('/remove_subscribe', methods=['POST'])
 def remove_subscribe():
     title = request.get_json()['title']
     year = request.get_json()['year']
@@ -121,7 +121,7 @@ def remove_subscribe():
     return jsonify({'success': True})
 
 
-@app.route('/get_subscription', methods=['GET'])
+@application.route('/get_subscription', methods=['GET'])
 def get_subscription():
     email = session.get('email')
     response = utils.query_subscription_by_email(email)
@@ -134,9 +134,9 @@ def get_subscription():
             'artist': item['artist'],
             'img_url': item['img_url']
         }
-        music_list.append(music_info)
+        music_list.applicationend(music_info)
     return jsonify(music_list)
 
 
 if __name__ == '__main__':
-    app.run()
+    application.run()
