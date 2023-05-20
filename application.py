@@ -57,11 +57,9 @@ def post_message():
     return redirect(url_for("forum"))
 
 @application.route('/get_message', methods=['Get'])
-def post_message():
+def get_message():
     response = utils.query_all_post()
-
-
-    return redirect(url_for("forum"))
+    return response
 
 
 
