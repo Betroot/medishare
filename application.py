@@ -52,9 +52,17 @@ def post_message():
     else:
         image_url = None
 
-    utils.insert_post(message, image_url, location, user, phone_number, timestamp)
+    utils.insert_post(message, image_url, location, user['user_name'], phone_number, timestamp)
 
     return redirect(url_for("forum"))
+
+@application.route('/get_message', methods=['Get'])
+def post_message():
+    response = utils.query_all_post()
+
+
+    return redirect(url_for("forum"))
+
 
 
 @application.route('/register', methods=['GET', "POST"])
