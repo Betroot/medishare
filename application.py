@@ -12,7 +12,7 @@ bucket_name = "music-bucket340822"
 
 import utils
 
-
+application.secret_key = 'your_secret_key_here'
 @application.route('/')
 def root():
     return render_template(

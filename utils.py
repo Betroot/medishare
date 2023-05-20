@@ -23,24 +23,34 @@ def query_music(title, year, artist):
 
 
 def validate_user(email, password):
-    login_table = dynamodb.Table('login')
-
-    try:
-        response = login_table.get_item(
-            Key={
-                'email': email
-            }
-        )
-    except ClientError as e:
-        application.logger.info(e.response['error']['message'])
-        return False
-
-    else:
-        # check whether response contains item and password matches
+    # login_table = dynamodb.Table('login')
+    #
+    # try:
+    #     response = login_table.get_item(
+    #         Key={
+    #             'email': email
+    #         }
+    #     )
+    # except ClientError as e:
+    #     application.logger.info(e.response['error']['message'])
+    #     return False
+    #
+    # else:
+    #     # check whether response contains item and password matches
+    #     if 'Item' in response and response['Item']['password'] == password:
+    #         return response['Item']
+    #     else:
+    #         return False
+    data = {"operation": "read", "payload": {"Item": {"email": email, "password": password}}}
+    response = requests.get(public_api + 'login', json=data)
+    if response.status_code == 200:
+        # 登录成功
         if 'Item' in response and response['Item']['password'] == password:
             return response['Item']
-        else:
-            return False
+    else:
+        # 登录失败
+        return False
+
 
 
 def is_email_exist(email):
@@ -157,66 +167,6 @@ def create_login_table():
             raise e
     else:
         print(f"Table login already exists.")
-
-
-def load_login_data():
-    table = dynamodb.Table('login')
-    items = [
-        {
-            'email': 's34252420@student.rmit.edu.au',
-            'user_name': 'Bai Lin Johannes Ao0',
-            'password': '012345'
-        },
-        {
-            'email': 's34252421@student.rmit.edu.au',
-            'user_name': 'Bai Lin Johannes Ao1',
-            'password': '123456'
-        },
-        {
-            'email': 's34252422@student.rmit.edu.au',
-            'user_name': 'Bai Lin Johannes Ao2',
-            'password': '234567'
-        },
-        {
-            'email': 's34252423@student.rmit.edu.au',
-            'user_name': 'Bai Lin Johannes Ao3',
-            'password': '345678'
-        },
-        {
-            'email': 's34252424@student.rmit.edu.au',
-            'user_name': 'Bai Lin Johannes Ao4',
-            'password': '456789'
-        },
-        {
-            'email': 's34252425@student.rmit.edu.au',
-            'user_name': 'Bai Lin Johannes Ao5',
-            'password': '567890'
-        },
-        {
-            'email': 's34252426@student.rmit.edu.au',
-            'user_name': 'Bai Lin Johannes Ao6',
-            'password': '678901'
-        },
-        {
-            'email': 's34252427@student.rmit.edu.au',
-            'user_name': 'Bai Lin Johannes Ao7',
-            'password': '789012'
-        },
-        {
-            'email': 's34252428@student.rmit.edu.au',
-            'user_name': 'Bai Lin Johannes Ao8',
-            'password': '890123'
-        },
-        {
-            'email': 's34252429@student.rmit.edu.au',
-            'user_name': 'Bai Lin Johannes Ao9',
-            'password': '901234'
-        }
-    ]
-
-    with table.batch_writer() as batch:
-        for item in items:
-            batch.put_item(Item=item)
 
 
 def create_music_table():
