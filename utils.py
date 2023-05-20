@@ -13,24 +13,6 @@ bucket_name = "music-bucket340822"
 
 
 # load image url
-def load_image_url():
-    with open("/var/www/myapp/a2.json") as json_file:
-        data = json.load(json_file)
-
-    songs = data['songs']
-    for song in songs:
-        image_url = song['img_url']
-        filename = image_url.split('/')[-1]
-        response = requests.get(image_url)
-        if response.status_code != 200:
-            application.logger.info(f"Error downloading {image_url}: {response.status_code}")
-        try:
-            with io.BytesIO(response.content) as file_obj:
-                s3.upload_fileobj(file_obj, bucket_name, filename)
-                application.logger.info(f"Uploaded {filename} to S3 bucket.")
-        except Exception as e:
-            application.logger.info(f"Error uploading {filename} to S3 bucket: {e}")
-
 
 def query_music(title, year, artist):
     table = dynamodb.Table('music')
@@ -98,8 +80,10 @@ def query_subscription_by_email(email):
 
 
 def insert_user(email, username, password):
-    table = dynamodb.Table('login')
-    table.put_item(Item={'email': email, 'user_name': username, 'password': password})
+    data = {"operation": "create", "payload": {"Item": {"email": "123456"}}}
+    response = requests.post('https://p7zk140dwf.execute-api.us-east-1.amazonaws.com/test/dynamodbmanager', json=data)
+    # table = dynamodb.Table('login')
+    # table.put_item(Item={'email': email, 'user_name': username, 'password': password})
 
 
 def create_subscribe_table():
