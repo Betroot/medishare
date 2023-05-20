@@ -1,5 +1,7 @@
 from flask import Flask, request, redirect, render_template, session, url_for, flash, jsonify, logging
 import boto3
+import uuid
+import datetime
 
 application = Flask(__name__)
 
@@ -33,6 +35,28 @@ def login():
         return render_template('login.html', error_msg=error_msg)
 
 
+# Handle the form submission and store the message data
+@application.route('/post_message', methods=['POST'])
+def post_message():
+    content = request.form['message']
+    email = session.get("email")
+    user = utils.return_user_by_email(email)
+    image_file = request.files['image']
+    message = str(uuid.uuid4())
+    location = ""
+    phone_number = user['phone_number']
+    current_time = datetime.datetime.now()
+    timestamp = current_time.strftime("%Y-%m-%d %H:%M:%S")
+    if image_file:
+        image_url = utils.upload_image(message, image_file)
+    else:
+        image_url = None
+
+    utils.insert_post(message, image_url, location, user, phone_number, timestamp)
+
+    return redirect(url_for("forum"))
+
+
 @application.route('/register', methods=['GET', "POST"])
 def register():
     if request.method == 'GET':
@@ -42,7 +66,7 @@ def register():
         user_name = request.form['user_name']
         password = request.form['password']
         phone_number = request.form['phone_number']
-        if utils.is_email_exist(email):
+        if utils.return_user_by_email(email):
             error_message = 'The email already exists'
             return render_template('register.html', error_msg=error_message)
 
@@ -95,16 +119,6 @@ def perform_query():
     return jsonify( music_list)
 
 
-@application.route('/subscribe', methods=['POST'])
-def subscribe():
-    title = request.get_json()['title']
-    year = request.get_json()['year']
-    artist = request.get_json()['artist']
-    email = session.get('email')
-    img_url = request.get_json()['img_url']
-    utils.create_subscribe_table()
-    utils.insert_subscribe(email,title,year,artist,img_url)
-    return jsonify({'success': True})
 
 @application.route('/remove_subscribe', methods=['POST'])
 def remove_subscribe():

@@ -6,12 +6,19 @@ from boto3.dynamodb.conditions import Key, Attr
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
 s3 = boto3.client('s3')
-bucket_name = "music-bucket340822"
+bucket_name = "message-bucket340822"
 
 public_api = 'https://p7zk140dwf.execute-api.us-east-1.amazonaws.com/test/'
 
 
-# load image url
+def upload_image(filename, image):
+    try:
+        s3.upload_fileobj(image, bucket_name, filename)
+        image_signed_url = s3.generate_presigned_url('get_object', Params={'Bucket': bucket_name, 'Key': filename})
+        return image_signed_url
+    except Exception as e:
+        print(f"Error uploading {filename} to S3 bucket: {e}")
+
 
 def query_music(title, year, artist):
     table = dynamodb.Table('music')
@@ -40,7 +47,7 @@ def validate_user(email, password):
         return False
 
 
-def is_email_exist(email):
+def return_user_by_email(email):
     data = {
         "operation": "read",
         "payload": {
@@ -51,28 +58,20 @@ def is_email_exist(email):
     }
     response = requests.post(public_api + 'login', json=data)
     if 'Item' in response.json():
-        return True
+        return response.json()['Item']
     return False
 
 
-def insert_subscribe(email, title, year, artist, img_url):
-    table = dynamodb.Table('subscribe')
-    table.put_item(Item={'email': email, 'title': title, 'year': year, 'artist': artist, 'img_url': img_url})
+def insert_post(message, image, location, user, phone_number, timestamp):
+    data = {"operation": "create", "payload": {
+        "Item": {"message": message, "timestamp": timestamp, "image": image, "phone_number": phone_number
+            , "user_name": user, "location": location}}}
+    requests.post(public_api + 'post', json=data)
 
 
-def delete_subscribe(email, title, year, artist):
-    table = dynamodb.Table('subscribe')
-    try:
-        response = table.delete_item(
-            Key={
-                'email': email,
-                'title': title
-            },
-        )
-    except ClientError as e:
-        print(e.response['Error']['Message'])
-    else:
-        return response
+def delete_post(message, timestamp):
+    data = {"operation": "delete", "payload": {"Key": {"message": message, "timestamp": timestamp}}}
+    requests.post(public_api + 'post', json=data)
 
 
 def query_subscription_by_email(email):
@@ -84,46 +83,6 @@ def query_subscription_by_email(email):
 
 
 def insert_user(email, user_name, password, phone_number):
-    data = {"operation": "create", "payload": {"Item": {"email": email, "user_name": user_name, "password": password, "phone_number": phone_number}}}
+    data = {"operation": "create", "payload": {
+        "Item": {"email": email, "user_name": user_name, "password": password, "phone_number": phone_number}}}
     requests.post(public_api + 'login', json=data)
-
-
-def create_subscribe_table():
-    try:
-        table = dynamodb.Table('subscribe')
-        table.table_status
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'ResourceNotFoundException':
-            # Table does not exist, so create it
-            table = dynamodb.create_table(
-                TableName='subscribe',
-                KeySchema=[
-                    {
-                        'AttributeName': 'email',
-                        'KeyType': 'HASH'
-                    },
-                    {
-                        'AttributeName': 'title',
-                        'KeyType': 'RANGE'
-                    }
-                ],
-                AttributeDefinitions=[
-                    {
-                        'AttributeName': 'email',
-                        'AttributeType': 'S'
-                    },
-                    {
-                        'AttributeName': 'title',
-                        'AttributeType': 'S'
-                    }
-                ],
-                ProvisionedThroughput={
-                    'ReadCapacityUnits': 5,
-                    'WriteCapacityUnits': 5
-                }
-            )
-            table.wait_until_exists()
-        else:
-            raise e
-    else:
-        print(f"Table subscribe already exists.")
