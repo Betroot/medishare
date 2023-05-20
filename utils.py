@@ -13,7 +13,7 @@ public_api = 'https://p7zk140dwf.execute-api.us-east-1.amazonaws.com/test/'
 
 def upload_image(filename, image):
     try:
-        s3.upload_fileobj(image, bucket_name, filename)
+        s3.upload_fileobj(image, bucket_name, filename + '.jpg')
         image_signed_url = s3.generate_presigned_url('get_object', Params={'Bucket': bucket_name, 'Key': filename})
         return image_signed_url
     except Exception as e:
@@ -26,6 +26,16 @@ def query_music(title, year, artist):
         FilterExpression=Attr('title').contains(title) & Attr('year').contains(year) & Attr('artist').contains(artist)
     )
     return response
+
+
+def query_all_post():
+    data = {
+        "operation": "read_all",
+        "payload": {
+        }
+    }
+    response = requests.post(public_api + 'post', json=data)
+    return response.json()
 
 
 def validate_user(email, password):
