@@ -16,6 +16,7 @@ def root():
     return render_template(
         'login.html')
 
+
 @application.route('/login', methods=['GET', "POST"])
 def login():
     if request.method == 'GET':
@@ -48,7 +49,7 @@ def post_message():
     current_time = datetime.datetime.now()
     timestamp = current_time.strftime("%Y-%m-%d %H:%M:%S")
     if image_file:
-        image_url = utils.upload_image(message, image_file)
+        image_url = utils.upload_image(message + ".jpg", image_file)
     else:
         image_url = None
 
@@ -56,11 +57,11 @@ def post_message():
 
     return redirect(url_for("forum"))
 
+
 @application.route('/get_message', methods=['GET'])
 def get_message():
     response = utils.query_all_post()
     return response
-
 
 
 @application.route('/register', methods=['GET', "POST"])
@@ -122,8 +123,7 @@ def perform_query():
         image_signed_url = s3.generate_presigned_url('get_object', Params={'Bucket': bucket_name, 'Key': image_name})
         music_info['image_url'] = image_signed_url
         music_list.applicationend(music_info)
-    return jsonify( music_list)
-
+    return jsonify(music_list)
 
 
 @application.route('/remove_subscribe', methods=['POST'])
@@ -132,7 +132,7 @@ def remove_subscribe():
     year = request.get_json()['year']
     artist = request.get_json()['artist']
     email = session.get('email')
-    utils.delete_subscribe(email,title,year,artist)
+    utils.delete_subscribe(email, title, year, artist)
     return jsonify({'success': True})
 
 
@@ -142,7 +142,6 @@ def get_subscription():
     response = utils.query_subscription_by_email(email)
     music_list = []
     for item in response['Items']:
-
         music_info = {
             'title': item['title'],
             'year': item['year'],
