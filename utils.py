@@ -2,7 +2,7 @@ import boto3
 from botocore.exceptions import ClientError
 import json
 import io
-from application import app
+from application import application
 import requests
 from boto3.dynamodb.conditions import Key, Attr
 
@@ -23,13 +23,13 @@ def load_image_url():
         filename = image_url.split('/')[-1]
         response = requests.get(image_url)
         if response.status_code != 200:
-            app.logger.info(f"Error downloading {image_url}: {response.status_code}")
+            application.logger.info(f"Error downloading {image_url}: {response.status_code}")
         try:
             with io.BytesIO(response.content) as file_obj:
                 s3.upload_fileobj(file_obj, bucket_name, filename)
-                app.logger.info(f"Uploaded {filename} to S3 bucket.")
+                application.logger.info(f"Uploaded {filename} to S3 bucket.")
         except Exception as e:
-            app.logger.info(f"Error uploading {filename} to S3 bucket: {e}")
+            application.logger.info(f"Error uploading {filename} to S3 bucket: {e}")
 
 
 def query_music(title, year, artist):
@@ -50,7 +50,7 @@ def validate_user(email, password):
             }
         )
     except ClientError as e:
-        app.logger.info(e.response['error']['message'])
+        application.logger.info(e.response['error']['message'])
         return False
 
     else:
