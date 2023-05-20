@@ -1,6 +1,7 @@
 from flask import Flask, request, redirect, render_template, session, url_for, flash, jsonify, logging
 import logging
 import boto3
+from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
 
 application = Flask(__name__)
 application.logger.setLevel(logging.INFO)
@@ -13,11 +14,23 @@ bucket_name = "music-bucket340822"
 import utils
 
 application.secret_key = 'your_secret_key_here'
+application.config["FACEBOOK_OAUTH_CLIENT_ID"] = "148310754890459"
+application.config["FACEBOOK_OAUTH_CLIENT_SECRET"] = "c319c90308ab5912c6d6afac59c6c3d7"
+facebook_bp = make_facebook_blueprint()
+application.register_blueprint(facebook_bp, url_prefix="/login")
 @application.route('/')
 def root():
     return render_template(
         'login.html')
 
+@application.route("/login/facebook/authorized")
+def facebook_authorized():
+    if not facebook.authorized:
+        return redirect(url_for("facebook.login"))
+
+    # 使用 Facebook 用户信息进行业务逻辑处理，例如创建用户、登录等
+
+    return "Successfully logged in with Facebook!"
 
 @application.route('/login', methods=['GET', "POST"])
 def login():

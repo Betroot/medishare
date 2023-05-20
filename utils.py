@@ -33,29 +33,7 @@ def validate_user(email, password):
             }
         }
     }
-
-    # login_table = dynamodb.Table('login')
-    #
-    # try:
-    #     response = login_table.get_item(
-    #         Key={
-    #             'email': email
-    #         }
-    #     )
-    # except ClientError as e:
-    #     application.logger.info(e.response['error']['message'])
-    #     return False
-    #
-    # else:
-    #     # check whether response contains item and password matches
-    #     if 'Item' in response and response['Item']['password'] == password:
-    #         return response['Item']
-    #     else:
-    #         return False
-    # data = {"operation": "read", "payload": {"Item": {"email": email, "password": password}}}
     response = requests.post(public_api + 'login', json=data)
-    print("res:")
-    print(response.json())
     if response.status_code == 200:
         res = response.json()
         # login successfully
@@ -66,9 +44,16 @@ def validate_user(email, password):
 
 
 def is_email_exist(email):
-    table = dynamodb.Table('login')
-    response = table.get_item(Key={'email': email})
-    if 'Item' in response:
+    data = {
+        "operation": "read",
+        "payload": {
+            "Key": {
+                "email": email,
+            }
+        }
+    }
+    response = requests.post(public_api + 'login', json=data)
+    if 'Item' in response.json():
         return True
     return False
 
@@ -104,8 +89,6 @@ def query_subscription_by_email(email):
 def insert_user(email, user_name, password):
     data = {"operation": "create", "payload": {"Item": {"email": email, "user_name": user_name, "password": password}}}
     requests.post(public_api + 'login', json=data)
-    # table = dynamodb.Table('login')
-    # table.put_item(Item={'email': email, 'user_name': username, 'password': password})
 
 
 def create_subscribe_table():

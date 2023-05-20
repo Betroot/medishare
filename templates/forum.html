@@ -1,239 +1,67 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-  <title>Forum Page</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background-color: #f7f7f7;
-    }
-
-    .user-area {
-      text-align: right;
-      padding: 10px 0;
-    }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-
-    th,
-    td {
-      text-align: left;
-      padding: 8px;
-      border-bottom: 1px solid #ddd;
-      word-wrap: break-word;
-      word-break: break-all;
-    }
-  </style>
+  <title>类似于 Facebook 的前端</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
 </head>
-
 <body>
-  <div class="container">
-    <div class="user-area">
-      <p>Welcome, {{ user_name }}</a></p>
-      <a href="/logout" class="logout-link">Logout</a>
-    </div>
+  <div id="root"></div>
 
-    <div class="subscibe-display-area">
-      <h2>My Subscriptions</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>title</th>
-            <th>artist</th>
-            <th>year</th>
-            <th>artist image</th>
-            <th>operation</th>
-          </tr>
-        </thead>
-        <tbody id="subscribe-table-body">
-        </tbody>
-      </table>
-    </div>
-    <div class="query-area">
-      <h2>Query Music</h2>
-      <label for="title-input">Title:</label>
-      <input type="text" id="title-input">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.development.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.development.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
 
-      <label for="year-input">Year:</label>
-      <input type="text" id="year-input">
-
-      <label for="artist-input">Artist:</label>
-      <input type="text" id="artist-input">
-
-      <button id="query-btn">Query</button>
-
-      <div id="query-results"></div>
-      <div id="Subscriptions"></div>
-    </div>
-  </div>
-  <script>
-
-    const tableBody = document.getElementById("subscribe-table-body");
-
-    fetch("/get_subscription")
-      .then(response => response.json())
-      .then(subscriptions => {
-        subscriptions.forEach(subscription => {
-          const row = document.createElement("tr");
-
-          const titlecell = document.createElement("td");
-          titlecell.textContent = subscription.title;
-          row.appendChild(titlecell);
-
-          const artistCell = document.createElement("td");
-          artistCell.textContent = subscription.artist;
-          row.appendChild(artistCell);
-
-          const yearCell = document.createElement("td");
-          yearCell.textContent = subscription.year;
-          row.appendChild(yearCell);
-
-          const ImageCell = document.createElement("td");
-          const Image = document.createElement("img");
-          Image.src = subscription.img_url;
-          Image.style.width = "50px"; 
-          Image.style.height = "50px"; 
-          ImageCell.appendChild(Image);
-          row.appendChild(ImageCell);
-
-          // Create remove button
-        const removeButton = document.createElement('button');
-        removeButton.innerHTML = 'Remove';
-        removeButton.addEventListener('click', () => {
-          removeSubscription(subscription);
-        });
-        row.appendChild(removeButton)
-
-          tableBody.appendChild(row);
-        });
-      })
-      .catch(error => console.error(error));
-
-    document.getElementById("query-btn").addEventListener("click", function () {
-      var title = document.getElementById("title-input").value.trim();
-      var year = document.getElementById("year-input").value.trim();
-      var artist = document.getElementById("artist-input").value.trim();
-
-      // perform query
-      var results = performQuery(title, year, artist);
-    });
-
-    function performQuery(title, year, artist) {
-      if (!title && !year && !artist) {
-        alert("Please enter at least one query parameter.");
-        return;
-      }
-
-      const query = { title, year, artist };
-      const queryString = Object.entries(query)
-        .filter(([_, value]) => value) 
-        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-        .join("&");
-
-      fetch(`/perform-query?${queryString}`)
-        .then(response => response.json())
-        .then((data) => {
-          console.log(data);
-          if ('message' in data) {
-            // display results
-            var resultsDiv = document.getElementById("query-results");
-            resultsDiv.innerHTML = "No result is retrieved. Please query again."
-          } else {
-            const queryResults = document.getElementById("query-results");
-            queryResults.innerHTML = "";
-            data.forEach((result) => {
-              console.log(result)
-              const { title, year, artist, image_url } = result;
-
-              const resultDiv = document.createElement("div");
-              resultDiv.classList.add("result");
-
-              const titleEl = document.createElement("h3");
-              titleEl.textContent = title;
-              resultDiv.appendChild(titleEl);
-
-              const artistEl = document.createElement("p");
-              artistEl.textContent = artist;
-              resultDiv.appendChild(artistEl);
-
-              const yearEl = document.createElement("p");
-              yearEl.textContent = year;
-              resultDiv.appendChild(yearEl);
-
-              const imageEl = document.createElement("img");
-              imageEl.src = image_url;
-              resultDiv.appendChild(imageEl);
-
-              const subscribeBtn = document.createElement("button");
-              subscribeBtn.textContent = "Subscribe";
-              subscribeBtn.addEventListener("click", () => {
-                subscribe(result);
-              });
-              resultDiv.appendChild(subscribeBtn);
-
-              queryResults.appendChild(resultDiv);
-            });
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-          alert("An error occurred. Please try again.");
-        });
+  <script type="text/babel">
+    // 定义帖子组件
+    function Post({ author, content, timestamp }) {
+      return (
+        <div className="ui segment">
+          <div className="ui header">{author}</div>
+          <div>{content}</div>
+          <div className="ui mini bottom aligned header">{timestamp}</div>
+        </div>
+      );
     }
 
-    function removeSubscription(subscription){
-      // remove subcribe record from db
-      fetch("/remove_subscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          title: subscription.title,
-          artist: subscription.artist,
-          year: subscription.year,
-        })
-      }
-      ).then(response => response.json())
-        .then(data => {
-          console.log(data);
-        }
-        ).catch(error => console.error(error));
-      location.reload()
+    // 定义帖子列表组件
+    function PostList({ posts }) {
+      return (
+        <div className="ui container">
+          {posts.map((post) => (
+            <Post
+              key={post.id}
+              author={post.author}
+              content={post.content}
+              timestamp={post.timestamp}
+            />
+          ))}
+        </div>
+      );
     }
 
-    function subscribe(result) {
-      // add subscription to DynamoDB
-      fetch("/subscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          title: result.title,
-          artist: result.artist,
-          year: result.year,
-          img_url:  result.image_url
-        })
-      }
-      ).then(response => response.json())
-        .then(data => {
-          console.log(data);
-        }
-        ).catch(error => console.error(error));
-      location.reload()
-    }
+    // 帖子数据
+    const posts = [
+      {
+        id: 1,
+        author: "John",
+        content: "Hello, everyone!",
+        timestamp: "2023-05-19 10:00:00",
+      },
+      {
+        id: 2,
+        author: "Jane",
+        content: "Having a great day!",
+        timestamp: "2023-05-19 11:30:00",
+      },
+      // ...
+    ];
+
+    // 渲染帖子列表
+    ReactDOM.render(
+      <PostList posts={posts} />,
+      document.getElementById("root")
+    );
   </script>
-
 </body>
-
 </html>

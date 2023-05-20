@@ -87,6 +87,7 @@
     <div class="register-link">
       <p>Don't have an account? <a href="/register">Register</a></p>
     </div>
+    <a href="{{ url_for('facebook.login') }}">Login with Facebook</a>
     {% if error_msg %}
     <p id="error-msg">{{ error_msg }}</p>
     {% endif %}
