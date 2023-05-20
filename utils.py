@@ -60,7 +60,7 @@ def validate_user(email, password):
         res = response.json()
         # login successfully
         if 'Item' in response and response['Item']['password'] == password:
-            return response['Item']
+            return res['Item']
     else:
         return False
 
