@@ -13,7 +13,7 @@ public_api = 'https://p7zk140dwf.execute-api.us-east-1.amazonaws.com/test/'
 
 def upload_image(filename, image):
     try:
-        s3.upload_fileobj(image, bucket_name, filename + '.jpg')
+        s3.upload_fileobj(image, bucket_name, filename)
         image_signed_url = s3.generate_presigned_url('get_object', Params={'Bucket': bucket_name, 'Key': filename})
         return image_signed_url
     except Exception as e:

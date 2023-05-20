@@ -49,7 +49,7 @@ def post_message():
     current_time = datetime.datetime.now()
     timestamp = current_time.strftime("%Y-%m-%d %H:%M:%S")
     if image_file:
-        image_url = utils.upload_image(message + ".jpg", image_file)
+        image_url = utils.upload_image(message + ',jpg', image_file)
     else:
         image_url = None
 
