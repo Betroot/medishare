@@ -1,8 +1,5 @@
 import boto3
 from botocore.exceptions import ClientError
-import json
-import io
-from application import application
 import requests
 from boto3.dynamodb.conditions import Key, Attr
 

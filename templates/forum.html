@@ -1,67 +1,117 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>类似于 Facebook 的前端</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+  <title>Twitter-like Post</title>
+  <style>
+    .container {
+      width: 600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    #postForm {
+      margin-bottom: 10px;
+    }
+
+    #postContent {
+      width: 100%;
+      height: 100px;
+      resize: none;
+    }
+
+    #postButton {
+      display: block;
+      margin: 10px 0;
+    }
+
+    .post {
+      background-color: #f5f5f5;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .post .post-content {
+      font-size: 18px;
+    }
+
+    .post .post-timestamp {
+      font-size: 14px;
+      color: gray;
+    }
+  </style>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="app.js"></script>
 </head>
+
 <body>
-  <div id="root"></div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.development.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.development.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
-
-  <script type="text/babel">
-    // 定义帖子组件
-    function Post({ author, content, timestamp }) {
-      return (
-        <div className="ui segment">
-          <div className="ui header">{author}</div>
-          <div>{content}</div>
-          <div className="ui mini bottom aligned header">{timestamp}</div>
-        </div>
-      );
-    }
-
-    // 定义帖子列表组件
-    function PostList({ posts }) {
-      return (
-        <div className="ui container">
-          {posts.map((post) => (
-            <Post
-              key={post.id}
-              author={post.author}
-              content={post.content}
-              timestamp={post.timestamp}
-            />
-          ))}
-        </div>
-      );
-    }
-
-    // 帖子数据
-    const posts = [
-      {
-        id: 1,
-        author: "John",
-        content: "Hello, everyone!",
-        timestamp: "2023-05-19 10:00:00",
-      },
-      {
-        id: 2,
-        author: "Jane",
-        content: "Having a great day!",
-        timestamp: "2023-05-19 11:30:00",
-      },
-      // ...
-    ];
-
-    // 渲染帖子列表
-    ReactDOM.render(
-      <PostList posts={posts} />,
-      document.getElementById("root")
-    );
+  <div class="container">
+    <h1>Twitter-like Post</h1>
+    <div id="postForm">
+      <textarea id="postContent" placeholder="What's on your mind?"></textarea>
+      <button id="postButton">Post</button>
+    </div>
+    <div id="postList"></div>
+  </div>
+  <script>// 模拟帖子数据
+    var posts = [
+    {
+      content: "This is the first post",
+      timestamp: "2023-05-19 10:30 AM"
+    },
+    {
+      content: "Another post here",
+      timestamp: "2023-05-19 11:15 AM"
+    },
+    // 更多帖子...
+  ];
+  
+    $(document).ready(function () {
+      var $postForm = $('#postForm');
+      var $postContent = $('#postContent');
+      var $postList = $('#postList');
+  
+      $postForm.on('submit', function (event) {
+        event.preventDefault();
+  
+        var postContent = $postContent.val();
+  
+        var post = {
+          content: postContent,
+          timestamp: new Date().toLocaleString()
+        };
+  
+        posts.push(post);
+        renderPosts();
+  
+        $postForm[0].reset();
+      });
+  
+      function renderPosts() {
+        $postList.empty();
+  
+        for (var i = 0; i < posts.length; i++) {
+          var post = posts[i];
+  
+          var $postElement = $('<div class="post"></div>');
+          $postElement.append('<p class="post-content">' + post.content + '</p>');
+          $postElement.append('<p class="post-timestamp">' + post.timestamp + '</p>');
+  
+          $postList.prepend($postElement); // 倒序显示最新的帖子
+  
+          // 只保留最新的 10 条帖子，超过则删除最旧的帖子
+          if (i >= 10) {
+            posts.shift();
+          }
+        }
+      }
+    });
   </script>
 </body>
+
+
 </html>
