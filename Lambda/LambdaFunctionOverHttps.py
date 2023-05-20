@@ -23,7 +23,7 @@ def handler(event, context):
         dynamo.put_item(**x)
 
     def ddb_read(x):
-        dynamo.get_item(**x)
+        return dynamo.get_item(**x)
 
     def ddb_update(x):
         dynamo.update_item(**x)

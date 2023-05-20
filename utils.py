@@ -58,12 +58,10 @@ def validate_user(email, password):
     print(response.json())
     if response.status_code == 200:
         res = response.json()
-
-        # 登录成功
+        # login successfully
         if 'Item' in response and response['Item']['password'] == password:
             return response['Item']
     else:
-        # 登录失败
         return False
 
 
