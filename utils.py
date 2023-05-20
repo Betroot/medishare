@@ -30,7 +30,6 @@ def validate_user(email, password):
         "payload": {
             "Key": {
                 "email": email,
-                "password": password
             }
         }
     }
