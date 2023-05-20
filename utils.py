@@ -25,6 +25,16 @@ def query_music(title, year, artist):
 
 
 def validate_user(email, password):
+    data = {
+        "operation": "read",
+        "payload": {
+            "Key": {
+                "email": email,
+                "password": password
+            }
+        }
+    }
+
     # login_table = dynamodb.Table('login')
     #
     # try:
@@ -43,8 +53,8 @@ def validate_user(email, password):
     #         return response['Item']
     #     else:
     #         return False
-    data = {"operation": "read", "payload": {"Item": {"email": email, "password": password}}}
-    response = requests.get(public_api + 'login', json=data)
+    # data = {"operation": "read", "payload": {"Item": {"email": email, "password": password}}}
+    response = requests.post(public_api + 'login', json=data)
     if response.status_code == 200:
         res = response.json()
         print(res)
@@ -138,4 +148,3 @@ def create_subscribe_table():
             raise e
     else:
         print(f"Table subscribe already exists.")
-
