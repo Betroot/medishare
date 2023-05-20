@@ -54,10 +54,11 @@ def validate_user(email, password):
     #         return False
     # data = {"operation": "read", "payload": {"Item": {"email": email, "password": password}}}
     response = requests.post(public_api + 'login', json=data)
+    print("res:")
+    print(response.json())
     if response.status_code == 200:
         res = response.json()
-        print("res:")
-        print(res)
+
         # 登录成功
         if 'Item' in response and response['Item']['password'] == password:
             return response['Item']
