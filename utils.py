@@ -11,7 +11,7 @@ dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 s3 = boto3.client('s3')
 bucket_name = "music-bucket340822"
 
-
+public_api = 'https://p7zk140dwf.execute-api.us-east-1.amazonaws.com/test/'
 # load image url
 
 def query_music(title, year, artist):
@@ -79,9 +79,9 @@ def query_subscription_by_email(email):
     return response
 
 
-def insert_user(email, username, password):
-    data = {"operation": "create", "payload": {"Item": {"email": "123456"}}}
-    response = requests.post('https://p7zk140dwf.execute-api.us-east-1.amazonaws.com/test/dynamodbmanager', json=data)
+def insert_user(email, user_name, password):
+    data = {"operation": "create", "payload": {"Item": {"email": email,"user_name":user_name, "password": password}}}
+    requests.post(public_api+'login', json=data)
     # table = dynamodb.Table('login')
     # table.put_item(Item={'email': email, 'user_name': username, 'password': password})
 
