@@ -91,7 +91,7 @@ def query_subscription_by_email(email):
 
 def insert_user(email, user_name, password):
     data = {"operation": "create", "payload": {"Item": {"email": email,"user_name":user_name, "password": password}}}
-    requests.post(public_api+'login', json=data)
+    requests.post('https://p7zk140dwf.execute-api.us-east-1.amazonaws.com/test/login', json=data)
     # table = dynamodb.Table('login')
     # table.put_item(Item={'email': email, 'user_name': username, 'password': password})
 
