@@ -2,7 +2,7 @@ import boto3
 from botocore.exceptions import ClientError
 import json
 import io
-from main import app
+from app import app
 import requests
 from boto3.dynamodb.conditions import Key, Attr
 
@@ -276,14 +276,3 @@ def create_music_table():
         print(f"Table {table_name} already exists.")
 
 
-def load_music():
-    table_name = 'music'
-    table = dynamodb.Table(table_name)
-    with open("/var/www/myapp/a2.json") as json_file:
-        data = json.load(json_file)
-
-    songs = data['songs']
-    for song in songs:
-        table.put_item(Item=song)
-
-    app.logger.info(f"Data loaded into {table_name} table.")

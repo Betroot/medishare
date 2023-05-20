@@ -4,7 +4,7 @@ import boto3
 
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
-handler = logging.FileHandler('/var/log/apache2/myapp.log')
+handler = logging.FileHandler('myapp.log')
 handler.setLevel(logging.INFO)
 app.logger.addHandler(handler)
 s3 = boto3.client('s3')
@@ -15,11 +15,6 @@ import utils
 
 @app.route('/')
 def root():
-    utils.create_music_table()
-    utils.load_music()
-    utils.create_login_table()
-    utils.load_login_data()
-    utils.load_image_url()
     return render_template(
         'login.html')
 
