@@ -5,7 +5,7 @@ application = Flask(__name__)
 
 s3 = boto3.client('s3')
 bucket_name = "music-bucket340822"
-
+application.secret_key = "secret key"
 import utils
 
 
