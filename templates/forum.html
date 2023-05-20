@@ -2,116 +2,196 @@
 <html>
 
 <head>
-  <title>Twitter-like Post</title>
+  <title>Forum Page</title>
   <style>
+    /* Add necessary styles here */
+    body {
+      font-family: Arial, sans-serif;
+    }
+
     .container {
-      width: 600px;
+      max-width: 800px;
       margin: 0 auto;
+      background-color: #f7f7f7;
     }
 
-    h1 {
-      text-align: center;
+    .user-area {
+      text-align: right;
+      padding: 10px 0;
     }
 
-    #postForm {
-      margin-bottom: 10px;
+    .user-area img {
+      max-width: 50px;
+      max-height: 50px;
+      border-radius: 50%;
     }
 
-    #postContent {
-      width: 100%;
-      height: 100px;
-      resize: none;
-    }
-
-    #postButton {
-      display: block;
-      margin: 10px 0;
-    }
-
-    .post {
-      background-color: #f5f5f5;
+    .message-posting-area {
+      margin-top: 20px;
       padding: 10px;
+      background-color: #f7f7f7;
+      border-radius: 5px;
+    }
+
+    .message-posting-area label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .message-posting-area input[type="text"],
+    .message-posting-area textarea {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-sizing: border-box;
+    }
+
+    .message-posting-area textarea {
+      height: 150px;
+      resize: vertical;
+    }
+
+    .message-posting-area button[type="submit"] {
+      display: block;
+      margin-top: 10px;
+      padding: 8px 12px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .message-display-area {
+      margin-top: 20px;
+    }
+
+    .message-display-area .message {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #f7f7f7;
+      border-radius: 5px;
+    }
+
+    .message-display-area .message h3 {
+      margin-top: 0;
+    }
+
+    .message-display-area .message p {
+      margin-bottom: 0;
+    }
+
+    .message-display-area .message img {
+      max-width: 100%;
+      margin-top: 10px;
       margin-bottom: 10px;
     }
 
-    .post .post-content {
-      font-size: 18px;
+    table {
+      border-collapse: collapse;
+      width: 100%;
     }
 
-    .post .post-timestamp {
-      font-size: 14px;
-      color: gray;
+    th,
+    td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+      word-wrap: break-word;
+      word-break: break-all;
     }
   </style>
-  <link rel="stylesheet" type="text/css" href="styles.css">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="app.js"></script>
 </head>
 
 <body>
   <div class="container">
-    <h1>Twitter-like Post</h1>
-    <div id="postForm">
-      <textarea id="postContent" placeholder="What's on your mind?"></textarea>
-      <button id="postButton">Post</button>
+    <div class="user-area">
+      <p>Welcome, {{ user_name }}</a></p>
+      <a href="/logout" class="logout-link">Logout</a>
     </div>
-    <div id="postList"></div>
+
+    <div class="message-posting-area">
+      <form action="/post_message" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="subject">Medicine:</label>
+          <input type="text" class="form-control" id="subject" name="subject" required>
+        </div>
+        <div class="form-group">
+          <label for="image">Image:</label>
+          <input type="file" class="form-control-file" id="image" name="image">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+
+    <div class="message-display-area">
+      <!-- message display area code here -->
+      <h2>Latest Messages</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Medicine</th>
+            <th>Medicine Image</th>
+            <th>User Name</th>
+            <th>Contract Number</th>
+            <th>Posting Date and Time</th>
+          </tr>
+        </thead>
+        <tbody id="messages-table-body">
+        </tbody>
+      </table>
+    </div>
   </div>
-  <script>// 模拟帖子数据
-    var posts = [
-    {
-      content: "This is the first post",
-      timestamp: "2023-05-19 10:30 AM"
-    },
-    {
-      content: "Another post here",
-      timestamp: "2023-05-19 11:15 AM"
-    },
-    // 更多帖子...
-  ];
-  
-    $(document).ready(function () {
-      var $postForm = $('#postForm');
-      var $postContent = $('#postContent');
-      var $postList = $('#postList');
-  
-      $postForm.on('submit', function (event) {
-        event.preventDefault();
-  
-        var postContent = $postContent.val();
-  
-        var post = {
-          content: postContent,
-          timestamp: new Date().toLocaleString()
-        };
-  
-        posts.push(post);
-        renderPosts();
-  
-        $postForm[0].reset();
-      });
-  
-      function renderPosts() {
-        $postList.empty();
-  
-        for (var i = 0; i < posts.length; i++) {
-          var post = posts[i];
-  
-          var $postElement = $('<div class="post"></div>');
-          $postElement.append('<p class="post-content">' + post.content + '</p>');
-          $postElement.append('<p class="post-timestamp">' + post.timestamp + '</p>');
-  
-          $postList.prepend($postElement); // 倒序显示最新的帖子
-  
-          // 只保留最新的 10 条帖子，超过则删除最旧的帖子
-          if (i >= 10) {
-            posts.shift();
-          }
-        }
-      }
-    });
+  <script>
+    const tableBody = document.getElementById("messages-table-body");
+
+    // Fetch latest messages from backend and add to table
+    fetch("/get_latest_messages")
+      .then(response => response.json())
+      .then(messages => {
+        messages.forEach(message => {
+          const row = document.createElement("tr");
+
+          const subjectCell = document.createElement("td");
+          subjectCell.textContent = message.subject;
+          row.appendChild(subjectCell);
+
+          const messageCell = document.createElement("td");
+          messageCell.textContent = message.message_text;
+          row.appendChild(messageCell);
+
+          const messageImageCell = document.createElement("td");
+          const messageImage = document.createElement("img");
+          messageImage.src = message.image_url;
+          messageImage.style.width = "50px"; // Set image width here
+          messageImage.style.height = "50px"; // Set image height here
+          messageImageCell.appendChild(messageImage);
+          row.appendChild(messageImageCell);
+
+          const userNameCell = document.createElement("td");
+          userNameCell.textContent = message.user_name;
+          row.appendChild(userNameCell);
+
+          const userImageCell = document.createElement("td");
+          const userImage = document.createElement("img");
+          userImage.src = message.user_image_url;
+          userImage.style.width = "50px"; // Set image width here
+          userImage.style.height = "50px"; // Set image height here
+          userImageCell.appendChild(userImage);
+          row.appendChild(userImageCell);
+
+          const timestampCell = document.createElement("td");
+          timestampCell.textContent = message.timestamp;
+          row.appendChild(timestampCell);
+
+          tableBody.appendChild(row);
+        });
+      })
+      .catch(error => console.error(error));
   </script>
 </body>
-
 
 </html>
