@@ -32,7 +32,7 @@
       var table = $('#myTable').DataTable();
       table.clear().draw();
       $.each(data, function (index, row) {
-        table.row.add([row.name, row.age, row.location]).draw();
+        table.row.add([row.medicine, row.image, row.location]).draw();
       });
     }
   </script>

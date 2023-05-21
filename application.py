@@ -64,7 +64,7 @@ def get_message():
     result = []
     for res in response:
         message_dict = {
-            'Medicine': res['content'],
+            'medicine': res['content'],
             'image': res['image'],
             'address': res['address'],
             'user': res['user_name'],
@@ -72,6 +72,8 @@ def get_message():
             'timestamp': res['timestamp']
         }
         result.append(message_dict)
+    print("result: ")
+    print(result)
     return jsonify(result)
 
 
