@@ -8,3 +8,4 @@ Werkzeug==2.3.4
 boto3==1.18.26
 requests==2.26.0
 Flask-Dance==3.3.0
+geopy==2.2.0

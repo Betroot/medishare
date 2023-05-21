@@ -2,6 +2,8 @@ import boto3
 from botocore.exceptions import ClientError
 import requests
 from boto3.dynamodb.conditions import Key, Attr
+from geopy.geocoders import  Nominatim
+from geopy.distance import geodesic
 
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
@@ -71,13 +73,21 @@ def return_user_by_email(email):
         return response.json()['Item']
     return False
 
+def return_location():
+    geolocator = Nominatim(user_agent="my-app")
+    location = geolocator.geocode("User Address")
+    return [location.latitude, location.longitude]
 
-def insert_post(message, image, location, user, phone_number, timestamp):
+def compute_distance(user1_lat, user1_lon, user2_lat, user2_lon):
+    distance = geodesic((user1_lat, user1_lon), (user2_lat, user2_lon)).kilometers
+    return  distance
+
+
+def insert_post(message, content, image, latitude, longitude, user, phone_number, timestamp):
     data = {"operation": "create", "payload": {
-        "Item": {"message": message, "timestamp": timestamp, "image": image, "phone_number": phone_number
-            , "user_name": user, "location": location}}}
+        "Item": {"message": message, "content": content, "timestamp": timestamp, "image": image, "phone_number": phone_number
+            , "user_name": user, "latitude": latitude, "longitude": longitude}}}
     requests.post(public_api + 'post', json=data)
-
 
 def delete_post(message, timestamp):
     data = {"operation": "delete", "payload": {"Key": {"message": message, "timestamp": timestamp}}}
