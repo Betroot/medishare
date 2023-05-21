@@ -35,8 +35,10 @@
       $.each(data, function (index, row) {
         var img = document.createElement('img');
         img.src = row.image;
+        img.width = "100px";
+        img.width = "100px";
         table.row.add([row.medicine, '', row.address, row.user, row.phone_number, row.timestamp]).draw();
-        var cell = table.cell(index, 2).node();
+        var cell = table.cell(index, 1).node();
         cell.appendChild(img);
       });
     }
