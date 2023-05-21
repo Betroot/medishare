@@ -30,13 +30,17 @@
 
     function fillTable(data) {
       var table = $('#myTable').DataTable();
+
       table.clear().draw();
       $.each(data, function (index, row) {
         var img = document.createElement('img');
-        img.src = row.image; 
-        var cell = table.cell(index, 1).node();
+        img.src = row.image;
+        console.log('Index:', index);
+        console.log('Cell:', table.cell(index, 1).node());
+
+        var cell = table.cell(index, 2).node();
         cell.appendChild(img);
-        table.row.add([row.medicine, '', row.address, row.user, row.phone_number, row.timestamp]).draw(); // 添加其他数据
+        table.row.add([row.medicine, '', row.address, row.user, row.phone_number, row.timestamp]).draw();
       });
     }
   </script>
