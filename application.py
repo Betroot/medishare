@@ -139,13 +139,11 @@ def perform_query():
     return jsonify(music_list)
 
 
-@application.route('/remove_subscribe', methods=['POST'])
-def remove_subscribe():
-    title = request.get_json()['title']
-    year = request.get_json()['year']
-    artist = request.get_json()['artist']
-    email = session.get('email')
-    utils.delete_subscribe(email, title, year, artist)
+@application.route('/remove_message', methods=['POST'])
+def remove_message():
+    medicine = request.get_json()['medicine']
+    timestamp = request.get_json()['timestamp']
+    utils.delete_post(medicine, timestamp)
     return jsonify({'success': True})
 
 
