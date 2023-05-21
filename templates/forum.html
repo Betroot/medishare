@@ -4,6 +4,10 @@
 <head>
   <title>Forum Page</title>
   <style>
+    .center-text {
+      text-align: center;
+    }
+
     .user-area {
       text-align: right;
       padding: 15px 0;
@@ -81,7 +85,9 @@
 
 <body>
   <div class="container">
-    <h2>Forum Page</h2>
+    <div class="center-text">
+      <h2>Forum Page</h2>
+    </div>
     <div class="user-area">
       <p>Welcome, {{ user_name }}</a></p>
       <a href="/logout" class="logout-link">Logout</a>

@@ -22,14 +22,6 @@ def upload_image(filename, image):
         print(f"Error uploading {filename} to S3 bucket: {e}")
 
 
-def query_music(title, year, artist):
-    table = dynamodb.Table('music')
-    response = table.scan(
-        FilterExpression=Attr('title').contains(title) & Attr('year').contains(year) & Attr('artist').contains(artist)
-    )
-    return response
-
-
 def query_all_post():
     data = {
         "operation": "read_all",
@@ -58,7 +50,6 @@ def validate_user(email, password):
     else:
         return False
 
-
 def return_user_by_email(email):
     data = {
         "operation": "read",
@@ -73,15 +64,9 @@ def return_user_by_email(email):
         return response.json()['Item']
     return False
 
-def return_location():
-    geolocator = Nominatim(user_agent="my-app")
-    location = geolocator.geocode("User Address")
-    return [location.latitude, location.longitude]
-
 def compute_distance(user1_lat, user1_lon, user2_lat, user2_lon):
     distance = geodesic((user1_lat, user1_lon), (user2_lat, user2_lon)).kilometers
     return  distance
-
 
 def insert_post(message_id, message, image, address, user, phone_number, timestamp):
     data = {"operation": "create", "payload": {
@@ -92,15 +77,6 @@ def insert_post(message_id, message, image, address, user, phone_number, timesta
 def delete_post(message, timestamp):
     data = {"operation": "delete", "payload": {"Key": {"message": message, "timestamp": timestamp}}}
     requests.post(public_api + 'post', json=data)
-
-
-def query_subscription_by_email(email):
-    table = dynamodb.Table('subscribe')
-    response = table.query(
-        KeyConditionExpression=Key('email').eq(email)
-    )
-    return response
-
 
 def insert_user(email, user_name, password, phone_number):
     data = {"operation": "create", "payload": {
