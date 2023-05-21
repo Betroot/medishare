@@ -69,7 +69,7 @@ def get_message():
         message_dict = {
             'Medicine': res['content'],
             'image': res['image'],
-            'distance': utils.compute_distance(int(res['latitude']), res['longitude'], utils.return_location()[0], utils.return_location()[1]),
+            # 'distance': utils.compute_distance(int(res['latitude']), res['longitude'], utils.return_location()[0], utils.return_location()[1]),
             'user': res['user_name'],
             'phone_number': res['phone_number'],
             'timestamp': res['timestamp']
