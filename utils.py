@@ -87,6 +87,9 @@ def insert_post(message, content, image, latitude, longitude, user, phone_number
     data = {"operation": "create", "payload": {
         "Item": {"message": message, "content": content, "timestamp": timestamp, "image": image, "phone_number": phone_number
             , "user_name": user, "latitude": latitude, "longitude": longitude}}}
+    print("data: ")
+    print(data)
+
     requests.post(public_api + 'post', json=data)
 
 def delete_post(message, timestamp):
