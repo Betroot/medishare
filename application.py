@@ -39,21 +39,21 @@ def login():
 # Handle the form submission and store the message data
 @application.route('/post_message', methods=['POST'])
 def post_message():
-    content = request.form['message']
+    message = request.form['message']
     email = session.get("email")
     user = utils.return_user_by_email(email)
     image_file = request.files['image']
-    message = str(uuid.uuid4())
+    message_id = str(uuid.uuid4())
     address = request.form['address']
     phone_number = user['phone_number']
     current_time = datetime.datetime.now()
     timestamp = current_time.strftime("%Y-%m-%d %H:%M:%S")
     if image_file:
-        image_url = utils.upload_image(message + '.jpg', image_file)
+        image_url = utils.upload_image(message_id + '.jpg', image_file)
     else:
         image_url = None
 
-    utils.insert_post(message, content, image_url, address, user['user_name'], phone_number, timestamp)
+    utils.insert_post(message_id, message, image_url, address, user['user_name'], phone_number, timestamp)
 
     return redirect(url_for("forum"))
 
@@ -64,7 +64,7 @@ def get_message():
     result = []
     for res in response:
         message_dict = {
-            'medicine': res['content'],
+            'medicine': res['message'],
             'image': res['image'],
             'address': res['address'],
             'user': res['user_name'],

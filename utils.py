@@ -83,17 +83,14 @@ def compute_distance(user1_lat, user1_lon, user2_lat, user2_lon):
     return  distance
 
 
-def insert_post(message, content, image, address, user, phone_number, timestamp):
+def insert_post(message_id, message, image, address, user, phone_number, timestamp):
     data = {"operation": "create", "payload": {
-        "Item": {"message": message, "content": content, "timestamp": timestamp, "image": image, "phone_number": phone_number
+        "Item": {"message": message, "message_id": message_id, "timestamp": timestamp, "image": image, "phone_number": phone_number
             , "user_name": user, "address": address}}}
-    print("data: ")
-    print(data)
-
     requests.post(public_api + 'post', json=data)
 
 def delete_post(message, timestamp):
-    data = {"operation": "delete", "payload": {"Item": {"message": message, "timestamp": timestamp}}}
+    data = {"operation": "delete", "payload": {"Key": {"message": message, "timestamp": timestamp}}}
     requests.post(public_api + 'post', json=data)
 
 
