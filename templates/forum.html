@@ -27,7 +27,7 @@
         }
       });
     });
-
+    var user = '<%= session["user_name"] %>';
     function fillTable(data) {
       var table = $('#myTable').DataTable();
 
@@ -38,10 +38,40 @@
         img.style.width = "100px";
         img.style.width = "100px";
         table.row.add([row.medicine, '', row.address, row.user, row.phone_number, row.timestamp]).draw();
+
         var cell = table.cell(index, 1).node();
         cell.appendChild(img);
+
+        var remove_button = document.createElement('button');
+        removeButton.innerHTML = 'Remove';
+        removeButton.addEventListener('click', () => {
+          removeMessage(row);
+        });
+        var cell_6= table.cell(index, 6).node();
+        row.appendChild(removeButton)
       });
     }
+
+    function removeMessage(message){
+      // remove record from db
+      fetch("/remove_message", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          medicine: message.medicine,
+          timestamp: message.timestamp,
+        })
+      }
+      ).then(response => response.json())
+        .then(data => {
+          console.log(data);
+        }
+        ).catch(error => console.error(error));
+      location.reload()
+    }
+
   </script>
 </head>
 
