@@ -44,6 +44,7 @@
         var removeButton = document.createElement('button');
         removeButton.innerHTML = 'Remove';
         removeButton.addEventListener('click', () => {
+          console.log("remove")
           removeMessage(row);
         });
         var cell_6 = table.cell(index, 6).node();
@@ -53,6 +54,7 @@
     }
 
     function removeMessage(message) {
+      console.log(message.medicine)
       // remove record from db
       fetch("/remove_message", {
         method: "POST",
