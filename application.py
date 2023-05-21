@@ -111,9 +111,11 @@ def logout_():
 def remove_message():
     medicine = request.get_json()['medicine']
     timestamp = request.get_json()['timestamp']
+    user_name = request.get_json()['user_name']
     print("medicine: ")
     print(medicine)
-    utils.delete_post(medicine, timestamp)
+    if(user_name == session.get('user_name')):
+        utils.delete_post(medicine, timestamp)
     return jsonify({'success': True})
 
 
