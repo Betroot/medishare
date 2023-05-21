@@ -93,7 +93,7 @@ def insert_post(message, content, image, address, user, phone_number, timestamp)
     requests.post(public_api + 'post', json=data)
 
 def delete_post(message, timestamp):
-    data = {"operation": "delete", "payload": {"Key": {"message": message, "timestamp": timestamp}}}
+    data = {"operation": "delete", "payload": {"Item": {"message": message, "timestamp": timestamp}}}
     requests.post(public_api + 'post', json=data)
 
 
