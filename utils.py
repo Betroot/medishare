@@ -83,10 +83,10 @@ def compute_distance(user1_lat, user1_lon, user2_lat, user2_lon):
     return  distance
 
 
-def insert_post(message, content, image, latitude, longitude, user, phone_number, timestamp):
+def insert_post(message, content, image, address, user, phone_number, timestamp):
     data = {"operation": "create", "payload": {
         "Item": {"message": message, "content": content, "timestamp": timestamp, "image": image, "phone_number": phone_number
-            , "user_name": user, "latitude": latitude, "longitude": longitude}}}
+            , "user_name": user, "address": address}}}
     print("data: ")
     print(data)
 

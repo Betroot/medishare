@@ -3,7 +3,6 @@ import boto3
 import uuid
 import datetime
 
-
 application = Flask(__name__)
 
 s3 = boto3.client('s3')
@@ -37,7 +36,6 @@ def login():
         return render_template('login.html', error_msg=error_msg)
 
 
-
 # Handle the form submission and store the message data
 @application.route('/post_message', methods=['POST'])
 def post_message():
@@ -46,9 +44,7 @@ def post_message():
     user = utils.return_user_by_email(email)
     image_file = request.files['image']
     message = str(uuid.uuid4())
-    latitude = request.form['latitude']
-    longitude = request.form['longitude']
-
+    address = request.form['address']
     phone_number = user['phone_number']
     current_time = datetime.datetime.now()
     timestamp = current_time.strftime("%Y-%m-%d %H:%M:%S")
@@ -57,9 +53,10 @@ def post_message():
     else:
         image_url = None
 
-    utils.insert_post(message, content, image_url, latitude, longitude , user['user_name'], phone_number, timestamp)
+    utils.insert_post(message, content, image_url, address, user['user_name'], phone_number, timestamp)
 
     return redirect(url_for("forum"))
+
 
 @application.route('/get_message', methods=['GET'])
 def get_message():
@@ -69,12 +66,14 @@ def get_message():
         message_dict = {
             'Medicine': res['content'],
             'image': res['image'],
-            # 'distance': utils.compute_distance(int(res['latitude']), res['longitude'], utils.return_location()[0], utils.return_location()[1]),
+            'address': res['address'],
             'user': res['user_name'],
             'phone_number': res['phone_number'],
             'timestamp': res['timestamp']
         }
+        result.append(message_dict)
     return jsonify(result)
+
 
 @application.route('/register', methods=['GET', "POST"])
 def register():
