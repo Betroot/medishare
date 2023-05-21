@@ -41,18 +41,19 @@
 
         var cell = table.cell(index, 1).node();
         cell.appendChild(img);
-
-        var removeButton = document.createElement('button');
-        removeButton.innerHTML = 'Remove';
-        removeButton.addEventListener('click', () => {
-          removeMessage(row);
-        });
-        var cell_6= table.cell(index, 6).node();
-        cell_6.appendChild(removeButton)
+        if (row.user === user) {
+          var removeButton = document.createElement('button');
+          removeButton.innerHTML = 'Remove';
+          removeButton.addEventListener('click', () => {
+            removeMessage(row);
+          });
+          var cell_6 = table.cell(index, 6).node();
+          cell_6.appendChild(removeButton)
+        }
       });
     }
 
-    function removeMessage(message){
+    function removeMessage(message) {
       // remove record from db
       fetch("/remove_message", {
         method: "POST",

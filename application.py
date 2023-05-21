@@ -107,60 +107,14 @@ def logout_():
     del session['user_name']
     return redirect('/login')
 
-
-@application.route('/perform-query', methods=['GET'])
-def perform_query():
-    title = request.args.get('title')
-    year = request.args.get('year')
-    artist = request.args.get('artist')
-
-    if title is None:
-        title = ""
-    if year is None:
-        year = ""
-    if artist is None:
-        artist = ""
-
-    response = utils.query_music(title, year, artist)
-    if response['Count'] == 0:
-        return jsonify({'message': 'No result is retrieved. Please query again.'}), 200
-    music_list = []
-    for item in response['Items']:
-        music_info = {
-            'title': item['title'],
-            'year': item['year'],
-            'artist': item['artist']
-        }
-        image_url = item['img_url']
-        image_name = image_url.split('/')[-1]
-        image_signed_url = s3.generate_presigned_url('get_object', Params={'Bucket': bucket_name, 'Key': image_name})
-        music_info['image_url'] = image_signed_url
-        music_list.applicationend(music_info)
-    return jsonify(music_list)
-
-
 @application.route('/remove_message', methods=['POST'])
 def remove_message():
     medicine = request.get_json()['medicine']
     timestamp = request.get_json()['timestamp']
+    print("medicine: ")
+    print(medicine)
     utils.delete_post(medicine, timestamp)
     return jsonify({'success': True})
-
-
-@application.route('/get_subscription', methods=['GET'])
-def get_subscription():
-    email = session.get('email')
-    response = utils.query_subscription_by_email(email)
-    music_list = []
-    for item in response['Items']:
-        music_info = {
-            'title': item['title'],
-            'year': item['year'],
-            'artist': item['artist'],
-            'img_url': item['img_url']
-        }
-        music_list.applicationend(music_info)
-    return jsonify(music_list)
 
 
 if __name__ == '__main__':
