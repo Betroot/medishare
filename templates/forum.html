@@ -28,8 +28,7 @@
       });
     });
     function fillTable(data) {
-      var user_name = '{{ user_name }}';
-      console.log(user_name)
+
       var table = $('#myTable').DataTable();
 
       table.clear().draw();
@@ -43,15 +42,16 @@
         var cell = table.cell(index, 1).node();
         cell.appendChild(img);
 
-
-        var removeButton = document.createElement('button');
-        removeButton.innerHTML = 'Remove';
-        removeButton.addEventListener('click', () => {
-          removeMessage(row);
-        });
-        var cell_6 = table.cell(index, 6).node();
-        cell_6.appendChild(removeButton)
-
+        var user_name = '{{ user_name }}';
+        if (row.user == user_name) {
+          var removeButton = document.createElement('button');
+          removeButton.innerHTML = 'Remove';
+          removeButton.addEventListener('click', () => {
+            removeMessage(row);
+          });
+          var cell_6 = table.cell(index, 6).node();
+          cell_6.appendChild(removeButton)
+        }
       });
     }
 
