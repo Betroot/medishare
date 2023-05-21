@@ -46,7 +46,9 @@ def post_message():
     user = utils.return_user_by_email(email)
     image_file = request.files['image']
     message = str(uuid.uuid4())
-    location = utils.return_location()
+    latitude = request.form['latitude']
+    longitude = request.form['longitude']
+
     phone_number = user['phone_number']
     current_time = datetime.datetime.now()
     timestamp = current_time.strftime("%Y-%m-%d %H:%M:%S")
@@ -55,7 +57,7 @@ def post_message():
     else:
         image_url = None
 
-    utils.insert_post(message, content, image_url, location[0], location[1] , user['user_name'], phone_number, timestamp)
+    utils.insert_post(message, content, image_url, latitude, longitude , user['user_name'], phone_number, timestamp)
 
     return redirect(url_for("forum"))
 
