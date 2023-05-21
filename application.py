@@ -72,8 +72,6 @@ def get_message():
             'timestamp': res['timestamp']
         }
         result.append(message_dict)
-    print("result: ")
-    print(result)
     return jsonify(result)
 
 
