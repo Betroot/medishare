@@ -28,6 +28,8 @@
       });
     });
     function fillTable(data) {
+      var user_name = '<%= user_name %>';
+      console.log(user_name)
       var table = $('#myTable').DataTable();
 
       table.clear().draw();
@@ -41,10 +43,10 @@
         var cell = table.cell(index, 1).node();
         cell.appendChild(img);
 
+
         var removeButton = document.createElement('button');
         removeButton.innerHTML = 'Remove';
         removeButton.addEventListener('click', () => {
-          console.log("remove")
           removeMessage(row);
         });
         var cell_6 = table.cell(index, 6).node();
@@ -54,7 +56,6 @@
     }
 
     function removeMessage(message) {
-      console.log(message.medicine)
       // remove record from db
       fetch("/remove_message", {
         method: "POST",
@@ -64,7 +65,7 @@
         body: JSON.stringify({
           medicine: message.medicine,
           timestamp: message.timestamp,
-          user_name : message.user
+          user_name: message.user
         })
       }
       ).then(response => response.json())
